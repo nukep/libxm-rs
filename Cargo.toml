@@ -13,3 +13,4 @@ license = "WTFPL"
 
 [dependencies.libxm-sys]
 path = "libxm-sys"
+version = "0.0.1"
