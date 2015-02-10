@@ -3,6 +3,11 @@
 name = "libxm-sys"
 version = "0.0.1"
 authors = ["Dan Spencer <dan@atomicpotato.net>"]
+description = "Raw libxm bindings for Rust"
+repository = "https://github.com/nukep/libxm-rs"
+documentation = "https://nukep.github.io/libxm-rs/libxm-sys"
+keywords = ["xm", "libxm", "FastTracker", "sys"]
+license = "WTFPL"
 links = "xm"
 build = "build.rs"
 
