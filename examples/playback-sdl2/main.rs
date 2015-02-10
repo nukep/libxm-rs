@@ -107,5 +107,12 @@ fn main() {
     let mut xm = XMContext::new(contents.as_slice(), rate).unwrap();
     xm.set_max_loop_count(max_loops);
 
+    println!("Module name: {}", String::from_utf8_lossy(xm.get_module_name()));
+    println!("Tracker: {}", String::from_utf8_lossy(xm.get_tracker_name()));
+    println!("Channels: {}", xm.get_number_of_channels());
+    println!("Module length: {}", xm.get_module_length());
+    println!("Patterns: {}", xm.get_number_of_patterns());
+    println!("Instruments: {}", xm.get_number_of_instruments());
+
     play_audio(xm, rate, max_loops);
 }
