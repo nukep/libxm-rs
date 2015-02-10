@@ -5,7 +5,7 @@ extern crate libc;
 
 use std::mem;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, Debug)]
 pub enum CreateError {
     Unknown(libc::c_int),
     ModuleDataNotSane,
