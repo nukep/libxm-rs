@@ -14,16 +14,22 @@ pub enum CreateError {
 
 #[derive(Copy, Clone)]
 pub struct PlayingSpeed {
-    bpm: u16,
-    tempo: u16
+    /// Beats per minute
+    pub bpm: u16,
+    /// Ticks per line
+    pub tempo: u16
 }
 
 #[derive(Copy, Clone)]
 pub struct Position {
-    pattern_index: u8,
-    pattern: u8,
-    row: u8,
-    samples: u64
+    /// Pattern index in the POT (pattern order table)
+    pub pattern_index: u8,
+    /// Pattern number
+    pub pattern: u8,
+    /// Row number
+    pub row: u8,
+    /// Total number of generated samples
+    pub samples: u64
 }
 
 pub struct XMContext {
@@ -35,6 +41,11 @@ unsafe impl Send for XMContext {}
 unsafe impl Sync for XMContext {}
 
 impl XMContext {
+    /// Creates an XM context.
+    ///
+    /// # Parameters
+    /// * `mod_data` - The contents of the module.
+    /// * `rate` - The play rate in Hz. Recommended value is 48000.
     pub fn new(mod_data: &[u8], rate: u32) -> Result<XMContext, CreateError> {
         // What if `mod_data` is unexpectedly short (say, 4 bytes long)?
 
@@ -61,24 +72,38 @@ impl XMContext {
         }
     }
 
+    /// Plays the module and puts the sound samples in the specified output buffer.
+    /// The output is in stereo.
     #[inline]
     pub fn generate_samples(&mut self, output: &mut [f32]) {
         unsafe {
-            let output_len = std::num::cast(output.len()).expect("Integer overflow");
+            // Output buffer must have a multiple-of-two length.
+            assert!(output.len() % 2 == 0);
+
+            let output_len = std::num::cast(output.len() / 2).expect("Integer overflow");
             raw::xm_generate_samples(self.raw, output.as_mut_ptr(), output_len);
         }
     }
 
+    /// Sets the maximum number of times a module can loop.
+    ///
+    /// After the specified number of loops, calls to `generate_samples()` will
+    /// generate silence.
     #[inline]
     pub fn set_max_loop_count(&mut self, loopcnt: u8) {
         unsafe { raw::xm_set_max_loop_count(self.raw, loopcnt); }
     }
 
+    /// Gets the loop count of the currently playing module.
+    ///
+    /// This value is 0 when the module is still playing, 1 when the module has
+    /// looped once, etc.
     #[inline]
     pub fn get_loop_count(&self) -> u8 {
         unsafe { raw::xm_get_loop_count(self.raw) }
     }
 
+    /// Gets the module name as a byte slice. The string encoding is unknown.
     #[inline]
     pub fn get_module_name(&self) -> &[u8] {
         // Is name always UTF-8? Another encoding?
@@ -91,6 +116,7 @@ impl XMContext {
         }
     }
 
+    /// Gets the tracker name as a byte slice. The string encoding is unknown.
     #[inline]
     pub fn get_tracker_name(&self) -> &[u8] {
         // Is name always UTF-8? Another encoding?
@@ -103,21 +129,28 @@ impl XMContext {
         }
     }
 
+    /// Gets the number of channels.
     #[inline]
     pub fn get_number_of_channels(&self) -> u16 {
         unsafe { raw::xm_get_number_of_channels(self.raw) }
     }
 
+    /// Gets the module length (in patterns).
     #[inline]
     pub fn get_module_length(&self) -> u16 {
         unsafe { raw::xm_get_module_length(self.raw) }
     }
 
+    /// Gets the number of patterns.
     #[inline]
     pub fn get_number_of_patterns(&self) -> u16 {
         unsafe { raw::xm_get_number_of_patterns(self.raw) }
     }
 
+    /// Gets the number of rows in a pattern.
+    ///
+    /// # Note
+    /// Pattern numbers go from `0` to `get_number_of_patterns() - 1`
     #[inline]
     pub fn get_number_of_rows(&self, pattern: u16) -> u16 {
         assert!(pattern < self.get_number_of_patterns());
@@ -125,11 +158,16 @@ impl XMContext {
         unsafe { raw::xm_get_number_of_rows(self.raw, pattern) }
     }
 
+    /// Gets the number of instruments.
     #[inline]
     pub fn get_number_of_instruments(&self) -> u16 {
         unsafe { raw::xm_get_number_of_instruments(self.raw) }
     }
 
+    /// Gets the number of samples of an instrument.
+    ///
+    /// # Note
+    /// Instrument numbers go from `1` to `get_number_of_instruments()`
     #[inline]
     pub fn get_number_of_samples(&self, instrument: u16) -> u16 {
         assert!(instrument >= 1);
@@ -138,6 +176,7 @@ impl XMContext {
         unsafe { raw::xm_get_number_of_samples(self.raw, instrument) }
     }
 
+    /// Gets the current module speed.
     #[inline]
     pub fn get_playing_speed(&self) -> PlayingSpeed {
         let (mut bpm, mut tempo) = (0, 0);
@@ -149,6 +188,7 @@ impl XMContext {
         }
     }
 
+    /// Gets the current position in the module being played.
     #[inline]
     pub fn get_position(&self) -> Position {
         let (mut pattern_index, mut pattern, mut row) = (0, 0, 0);
@@ -163,6 +203,11 @@ impl XMContext {
         }
     }
 
+    /// Gets the latest time (in number of generated samples) when a
+    /// particular instrument was triggered in any channel.
+    ///
+    /// # Note
+    /// Instrument numbers go from `1` to `get_number_of_instruments()`
     #[inline]
     pub fn get_latest_trigger_of_instrument(&self, instrument: u16) -> u64 {
         assert!(instrument >= 1);
@@ -171,6 +216,13 @@ impl XMContext {
         unsafe { raw::xm_get_latest_trigger_of_instrument(self.raw, instrument) }
     }
 
+    /// Get the latest time (in number of generated samples) when a
+    /// particular sample was triggered in any channel.
+    ///
+    /// # Note
+    /// Instrument numbers go from `1` to `get_number_of_instruments()`
+    ///
+    /// Sample numbers go from `0` to `get_number_of_samples(instrument) - 1`
     #[inline]
     pub fn get_latest_trigger_of_sample(&self, instrument: u16, sample: u16) -> u64 {
         assert!(instrument >= 1);
@@ -180,6 +232,11 @@ impl XMContext {
         unsafe { raw::xm_get_latest_trigger_of_sample(self.raw, instrument, sample) }
     }
 
+    /// Get the latest time (in number of generated samples) when any
+    /// instrument was triggered in a given channel.
+    ///
+    /// # Note
+    /// Channel numbers go from `1` to `get_number_of_channels()`
     #[inline]
     pub fn get_latest_trigger_of_channel(&self, channel: u16) -> u64 {
         assert!(channel >= 1);
