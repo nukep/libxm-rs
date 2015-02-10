@@ -5,3 +5,10 @@ version = "0.0.1"
 authors = ["Dan Spencer <dan@atomicpotato.net>"]
 links = "xm"
 build = "build.rs"
+
+[lib]
+name = "libxm-sys"
+path = "lib.rs"
+
+[build-dependencies]
+gcc = "0.*"
