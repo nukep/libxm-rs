@@ -1,3 +1,20 @@
+//! # libxm-rs
+//! A binding of [libxm](https://github.com/Artefact2/libxm/) for Rust.
+//!
+//! A small XM (FastTracker II Extended Module) player library.
+//! Designed for easy integration in demos and such, and provides timing
+//! functions for easy sync against specific instruments, samples or channels.
+//!
+//! # Example
+//! ```no_run
+//! use libxm::XMContext;
+//!
+//! fn fill_buffer(mod_data: &[u8], buffer: &mut [f32]) {
+//!     let mut xm = XMContext::new(mod_data, 48000).unwrap();
+//!     xm.generate_samples(buffer);
+//! }
+//! ```
+
 #![feature(core, libc, std_misc)]
 
 extern crate "libxm-sys" as raw;
@@ -5,13 +22,20 @@ extern crate libc;
 
 use std::mem;
 
+/// Possible errors from the `XMContext::new` method.
 #[derive(Copy, Clone, Debug)]
-pub enum CreateError {
+pub enum XMError {
+    /// An unknown error reported by libxm.
+    /// This enum exists in order to gracefully handle future errors from
+    /// newer versions of libxm.
     Unknown(libc::c_int),
+    /// The module data is corrupted or invalid
     ModuleDataNotSane,
+    /// There was an issue allocating additional memory
     MemoryAllocationFailed
 }
 
+/// The return values from `XMContext::get_playing_speed()`.
 #[derive(Copy, Clone)]
 pub struct PlayingSpeed {
     /// Beats per minute
@@ -20,6 +44,7 @@ pub struct PlayingSpeed {
     pub tempo: u16
 }
 
+/// The return values from `XMContext::get_position()`.
 #[derive(Copy, Clone)]
 pub struct Position {
     /// Pattern index in the POT (pattern order table)
@@ -32,6 +57,7 @@ pub struct Position {
     pub samples: u64
 }
 
+/// The XM context.
 pub struct XMContext {
     raw: *mut raw::xm_context_t,
     _marker: std::marker::NoCopy
@@ -46,12 +72,12 @@ impl XMContext {
     /// # Parameters
     /// * `mod_data` - The contents of the module.
     /// * `rate` - The play rate in Hz. Recommended value is 48000.
-    pub fn new(mod_data: &[u8], rate: u32) -> Result<XMContext, CreateError> {
+    pub fn new(mod_data: &[u8], rate: u32) -> Result<XMContext, XMError> {
         // What if `mod_data` is unexpectedly short (say, 4 bytes long)?
 
         // For now, check that the length is reasonable
         if mod_data.len() < 60 {
-            return Err(CreateError::ModuleDataNotSane);
+            return Err(XMError::ModuleDataNotSane);
         }
 
         unsafe {
@@ -65,9 +91,9 @@ impl XMContext {
                     raw: raw,
                     _marker: std::marker::NoCopy
                 }),
-                1 => Err(CreateError::ModuleDataNotSane),
-                2 => Err(CreateError::MemoryAllocationFailed),
-                _ => Err(CreateError::Unknown(result))
+                1 => Err(XMError::ModuleDataNotSane),
+                2 => Err(XMError::MemoryAllocationFailed),
+                _ => Err(XMError::Unknown(result))
             }
         }
     }
