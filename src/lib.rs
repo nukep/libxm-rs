@@ -73,19 +73,13 @@ impl XMContext {
     /// * `mod_data` - The contents of the module.
     /// * `rate` - The play rate in Hz. Recommended value is 48000.
     pub fn new(mod_data: &[u8], rate: u32) -> Result<XMContext, XMError> {
-        // What if `mod_data` is unexpectedly short (say, 4 bytes long)?
-
-        // For now, check that the length is reasonable
-        if mod_data.len() < 60 {
-            return Err(XMError::ModuleDataNotSane);
-        }
-
         unsafe {
             let mut raw = mem::uninitialized();
 
             let mod_data_ptr = mem::transmute(mod_data.as_ptr());
+            let mod_data_len = std::num::cast(mod_data.len()).expect("Integer overflow");
 
-            let result = raw::xm_create_context(&mut raw, mod_data_ptr, rate);
+            let result = raw::xm_create_context_safe(&mut raw, mod_data_ptr, mod_data_len, rate);
             match result {
                 0 => Ok(XMContext {
                     raw: raw,

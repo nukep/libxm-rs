@@ -9,7 +9,7 @@ pub enum xm_context {}
 pub type xm_context_t = xm_context;
 
 extern "C" {
-    pub fn xm_create_context(context: *mut *mut xm_context_t, moddata: *const c_char, rate: uint32_t) -> c_int;
+    pub fn xm_create_context_safe(context: *mut *mut xm_context_t, moddata: *const c_char, moddata_length: size_t, rate: uint32_t) -> c_int;
     pub fn xm_free_context(context: *mut xm_context_t);
     pub fn xm_generate_samples(context: *mut xm_context_t, output: *mut c_float, numsamples: size_t);
     pub fn xm_set_max_loop_count(context: *mut xm_context_t, loopcnt: uint8_t);
