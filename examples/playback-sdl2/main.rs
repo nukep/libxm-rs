@@ -54,14 +54,9 @@ fn play_audio(xm: XMContext, rate: u32, max_loops: u8) {
 
     device.resume();
 
-    let mut loop_count = 0;
-
-    loop {
+    for _ in 0..max_loops {
+        // Block until the song has looped
         loop_rx.recv().unwrap();
-        loop_count += 1;
-        if loop_count >= max_loops {
-            break;
-        }
     }
 }
 
