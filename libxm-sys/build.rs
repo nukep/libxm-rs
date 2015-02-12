@@ -23,25 +23,20 @@ fn main() {
     let debug = parse_env("XM_DEBUG", false);
     let big_endian = parse_env("XM_BIG_ENDIAN", false);
 
-    fn on_off(value: bool) -> Option<String> {
-        Some(if value { "1" } else { "0" }.to_string())
+    fn on_off(value: bool) -> Option<&'static str> {
+        Some(if value { "1" } else { "0" })
     }
 
-    let config = gcc::Config {
-        include_directories: vec![Path::new("libxm/include")],
-        definitions: vec![
-            ("XM_LINEAR_INTERPOLATION".to_string(), on_off(linear_interpolation)),
-            ("XM_RAMPING".to_string(), on_off(ramping)),
-            ("XM_DEBUG".to_string(), on_off(debug)),
-            ("XM_BIG_ENDIAN".to_string(), on_off(big_endian)),
-        ],
-        objects: vec![],
-        flags: vec!["--std=c11".to_string()]
-    };
-
-    gcc::compile_library(
-        "libxm.a",
-        &config,
-        &["libxm/src/context.c", "libxm/src/load.c", "libxm/src/play.c", "libxm/src/xm.c"]
-    );
+    gcc::Config::new()
+        .file("libxm/src/context.c")
+        .file("libxm/src/load.c")
+        .file("libxm/src/play.c")
+        .file("libxm/src/xm.c")
+        .include(Path::new("libxm/include"))
+        .define("XM_LINEAR_INTERPOLATION", on_off(linear_interpolation))
+        .define("XM_RAMPING", on_off(ramping))
+        .define("XM_DEBUG", on_off(debug))
+        .define("XM_BIG_ENDIAN", on_off(big_endian))
+        .flag("--std=c11")
+        .compile("libxm.a");
 }
