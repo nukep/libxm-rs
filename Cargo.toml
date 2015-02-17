@@ -9,8 +9,8 @@ documentation = "https://nukep.github.io/libxm-rs/libxm"
 readme = "README.md"
 keywords = ["xm", "libxm", "FastTracker"]
 license = "WTFPL"
+links = "xm"
+build = "build.rs"
 
-
-[dependencies.libxm-sys]
-path = "libxm-sys"
-version = "0.0.2"
+[build-dependencies]
+gcc = "0.2"

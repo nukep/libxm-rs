@@ -1,5 +1,4 @@
 #![allow(non_camel_case_types, missing_copy_implementations)]
-#![feature(libc)]
 extern crate libc;
 
 use libc::{c_char, c_int, c_float, size_t};

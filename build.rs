@@ -3,9 +3,9 @@ extern crate gcc;
 
 fn main() {
     fn parse_env(key: &str, default: bool) -> bool {
-        use std::env::{var_string, VarError};
+        use std::env::{var, VarError};
 
-        match var_string(key) {
+        match var(key) {
             Ok(val) => {
                 match val.as_slice() {
                     "0" => false,

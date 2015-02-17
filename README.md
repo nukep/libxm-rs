@@ -11,11 +11,11 @@ As with libxm, this library is released under the WTFPL license.
 **Documentation**: https://nukep.github.io/libxm-rs/libxm
 
 ## Linking to a shared version of `libxm`
-By default, `libxm-sys` statically links and compiles `libxm`.
+By default, `libxm-rs` statically links and compiles `libxm`.
 This is to allow users to get started with the library more quickly.
 
 If you wish to provide your own shared or custom version of `libxm`, you can
-override the build step for `libxm-sys` in a `.cargo/config` file
+override the build step for `xm` in a `.cargo/config` file
 (see http://doc.crates.io/build-script.html#overriding-build-scripts).
 
 ```toml

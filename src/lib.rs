@@ -17,9 +17,10 @@
 
 #![feature(core, libc, std_misc)]
 
-extern crate "libxm-sys" as raw;
 extern crate libc;
 
+pub mod ffi;
+use ffi as raw;
 use std::mem;
 
 /// Possible errors from the `XMContext::new` method.
