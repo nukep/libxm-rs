@@ -130,10 +130,7 @@ impl XMContext {
         // Is name always UTF-8? Another encoding?
         unsafe {
             let name = raw::xm_get_module_name(self.raw);
-            // Tell Rust that the name is owned by `self`
-            let name_self = mem::copy_lifetime(self, &name);
-
-            std::ffi::c_str_to_bytes(name_self)
+            std::ffi::CStr::from_ptr(name).to_bytes()
         }
     }
 
@@ -143,10 +140,7 @@ impl XMContext {
         // Is name always UTF-8? Another encoding?
         unsafe {
             let name = raw::xm_get_tracker_name(self.raw);
-            // Tell Rust that the name is owned by `self`
-            let name_self = mem::copy_lifetime(self, &name);
-
-            std::ffi::c_str_to_bytes(name_self)
+            std::ffi::CStr::from_ptr(name).to_bytes()
         }
     }
 
