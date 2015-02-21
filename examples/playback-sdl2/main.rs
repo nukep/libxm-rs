@@ -1,4 +1,4 @@
-#![feature(os, collections, core, io, path)]
+#![feature(os, collections, core, io, fs)]
 
 extern crate getopts;
 extern crate libxm;
@@ -7,7 +7,8 @@ extern crate sdl2;
 use getopts::Options;
 use libxm::XMContext;
 use sdl2::audio::{AudioCallback, AudioSpecDesired};
-use std::old_io::File;
+use std::fs::File;
+use std::io::Read;
 use std::os;
 use std::sync::mpsc::Sender;
 
@@ -19,7 +20,7 @@ struct MyCallback {
 
 impl AudioCallback for MyCallback {
     type Channel = f32;
-    
+
     fn callback(&mut self, out: &mut [f32]) {
         self.xm.generate_samples(out);
 
@@ -69,7 +70,6 @@ fn print_usage(program: &str, opts: Options) {
 }
 
 fn main() {
-
     let args = os::args();
     let program = args[0].clone();
 
@@ -99,7 +99,8 @@ fn main() {
         None => 1
     };
 
-    let contents = File::open(&Path::new(input)).read_to_end().unwrap();
+    let mut contents = Vec::new();
+    File::open(&input).unwrap().read_to_end(&mut contents).unwrap();
 
     let mut xm = XMContext::new(contents.as_slice(), rate).unwrap();
     xm.set_max_loop_count(max_loops);

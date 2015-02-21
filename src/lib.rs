@@ -8,9 +8,29 @@
 //! # Example
 //! ```no_run
 //! use libxm::XMContext;
+//! use std::fs::File;
+//! use std::io::Read;
 //!
-//! fn fill_buffer(mod_data: &[u8], buffer: &mut [f32]) {
-//!     let mut xm = XMContext::new(mod_data, 48000).unwrap();
+//! // Read the contents of the module into `data`
+//! let mut data = Vec::new();
+//! File::open("song.xm").unwrap().read_to_end(&mut data).unwrap();
+//!
+//! let mut xm = XMContext::new(data.as_slice(), 48000).unwrap();
+//! xm.set_max_loop_count(1);
+//!
+//! let mut buffer = [0.0; 4096];
+//! while xm.get_loop_count() == 0 {
+//!     xm.generate_samples(buffer.as_mut_slice());
+//!     // The buffer is filled with stereo PCM data. Use it for whatever you need...
+//! }
+//! // The song has looped once.
+//! ```
+//!
+//! # Example
+//! ```no_run
+//! use libxm::XMContext;
+//!
+//! fn audio_callback(xm: &mut XMContext, buffer: &mut [f32]) {
 //!     xm.generate_samples(buffer);
 //! }
 //! ```
