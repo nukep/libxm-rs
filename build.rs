@@ -1,4 +1,4 @@
-#![feature(env, core, path)]
+#![feature(env, core)]
 extern crate gcc;
 
 fn main() {
@@ -32,7 +32,7 @@ fn main() {
         .file("libxm/src/load.c")
         .file("libxm/src/play.c")
         .file("libxm/src/xm.c")
-        .include(Path::new("libxm/include"))
+        .include("libxm/include")
         .define("XM_LINEAR_INTERPOLATION", on_off(linear_interpolation))
         .define("XM_RAMPING", on_off(ramping))
         .define("XM_DEBUG", on_off(debug))

@@ -17,7 +17,9 @@ struct MyCallback {
     loop_tx: Sender<()>
 }
 
-impl AudioCallback<f32> for MyCallback {
+impl AudioCallback for MyCallback {
+    type Channel = f32;
+    
     fn callback(&mut self, out: &mut [f32]) {
         self.xm.generate_samples(out);
 
