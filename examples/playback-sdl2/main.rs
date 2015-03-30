@@ -1,5 +1,3 @@
-#![feature(os, collections, core, io, fs)]
-
 extern crate getopts;
 extern crate libxm;
 extern crate sdl2;
@@ -9,7 +7,7 @@ use libxm::XMContext;
 use sdl2::audio::{AudioCallback, AudioSpecDesired};
 use std::fs::File;
 use std::io::Read;
-use std::os;
+use std::env;
 use std::sync::mpsc::Sender;
 
 struct MyCallback {
@@ -38,7 +36,7 @@ impl AudioCallback for MyCallback {
 fn play_audio(xm: XMContext, rate: u32, max_loops: u8) {
     use std::sync::mpsc::channel;
 
-    sdl2::init(sdl2::INIT_AUDIO);
+    let _sdl = sdl2::init(sdl2::INIT_AUDIO).unwrap();
 
     let (loop_tx, loop_rx) = channel();
 
@@ -66,18 +64,18 @@ fn play_audio(xm: XMContext, rate: u32, max_loops: u8) {
 
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("Usage: {} [options] FILE", program);
-    print!("{}", opts.usage(brief.as_slice()));
+    print!("{}", opts.usage(&brief));
 }
 
 fn main() {
-    let args = os::args();
+    let args: Vec<String> = env::args().collect();
     let program = args[0].clone();
 
     let mut opts = Options::new();
     opts.optopt("r", "rate", "Set the output rate", "RATE");
     opts.optopt("l", "loops", "Set the maximum number of loops", "LOOPS");
 
-    let matches = match opts.parse(args.tail()) {
+    let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
         Err(f) => { panic!(f.to_string()) }
     };
@@ -85,7 +83,7 @@ fn main() {
     let input = if !matches.free.is_empty() {
         matches.free[0].clone()
     } else {
-        print_usage(program.as_slice(), opts);
+        print_usage(&program, opts);
         return;
     };
 
@@ -102,7 +100,7 @@ fn main() {
     let mut contents = Vec::new();
     File::open(&input).unwrap().read_to_end(&mut contents).unwrap();
 
-    let mut xm = XMContext::new(contents.as_slice(), rate).unwrap();
+    let mut xm = XMContext::new(&contents, rate).unwrap();
     xm.set_max_loop_count(max_loops);
 
     println!("Module name: {}", String::from_utf8_lossy(xm.get_module_name()));

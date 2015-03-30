@@ -15,12 +15,12 @@
 //! let mut data = Vec::new();
 //! File::open("song.xm").unwrap().read_to_end(&mut data).unwrap();
 //!
-//! let mut xm = XMContext::new(data.as_slice(), 48000).unwrap();
+//! let mut xm = XMContext::new(&data, 48000).unwrap();
 //! xm.set_max_loop_count(1);
 //!
 //! let mut buffer = [0.0; 4096];
 //! while xm.get_loop_count() == 0 {
-//!     xm.generate_samples(buffer.as_mut_slice());
+//!     xm.generate_samples(&mut buffer);
 //!     // The buffer is filled with stereo PCM data. Use it for whatever you need...
 //! }
 //! // The song has looped once.
@@ -35,7 +35,7 @@
 //! }
 //! ```
 
-#![feature(core, libc, std_misc)]
+#![feature(core, libc)]
 
 extern crate libc;
 

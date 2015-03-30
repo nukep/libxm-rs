@@ -1,4 +1,3 @@
-#![feature(env, core)]
 extern crate gcc;
 
 fn main() {
@@ -7,7 +6,7 @@ fn main() {
 
         match var(key) {
             Ok(val) => {
-                match val.as_slice() {
+                match &val as &str {
                     "0" => false,
                     "1" => true,
                     _ => default
