@@ -35,8 +35,6 @@
 //! }
 //! ```
 
-#![feature(core, libc)]
-
 extern crate libc;
 
 pub mod ffi;
@@ -80,8 +78,7 @@ pub struct Position {
 
 /// The XM context.
 pub struct XMContext {
-    raw: *mut raw::xm_context_t,
-    _marker: std::marker::NoCopy
+    raw: *mut raw::xm_context_t
 }
 
 unsafe impl Send for XMContext {}
@@ -98,13 +95,12 @@ impl XMContext {
             let mut raw = mem::uninitialized();
 
             let mod_data_ptr = mem::transmute(mod_data.as_ptr());
-            let mod_data_len = std::num::cast(mod_data.len()).expect("Integer overflow");
+            let mod_data_len = mod_data.len() as libc::size_t;
 
             let result = raw::xm_create_context_safe(&mut raw, mod_data_ptr, mod_data_len, rate);
             match result {
                 0 => Ok(XMContext {
-                    raw: raw,
-                    _marker: std::marker::NoCopy
+                    raw: raw
                 }),
                 1 => Err(XMError::ModuleDataNotSane),
                 2 => Err(XMError::MemoryAllocationFailed),
@@ -121,7 +117,7 @@ impl XMContext {
             // Output buffer must have a multiple-of-two length.
             assert!(output.len() % 2 == 0);
 
-            let output_len = std::num::cast(output.len() / 2).expect("Integer overflow");
+            let output_len = (output.len() / 2) as libc::size_t;
             raw::xm_generate_samples(self.raw, output.as_mut_ptr(), output_len);
         }
     }
