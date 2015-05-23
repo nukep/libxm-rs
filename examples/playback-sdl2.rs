@@ -4,7 +4,7 @@ extern crate sdl2;
 
 use getopts::Options;
 use libxm::XMContext;
-use sdl2::audio::{AudioCallback, AudioSpecDesired};
+use sdl2::audio::{AudioCallback, AudioDevice, AudioSpecDesired};
 use std::fs::File;
 use std::io::Read;
 use std::env;
@@ -33,25 +33,36 @@ impl AudioCallback for MyCallback {
     }
 }
 
-fn play_audio(xm: XMContext, rate: u32, max_loops: u8) {
+fn play_audio(contents: &[u8], rate: u32, max_loops: u8) {
     use std::sync::mpsc::channel;
 
-    let _sdl = sdl2::init(sdl2::INIT_AUDIO).unwrap();
+    let _sdl = sdl2::init().audio().unwrap();
 
     let (loop_tx, loop_rx) = channel();
 
     let desired_spec = AudioSpecDesired {
-        freq: rate as i32,
-        channels: 2,
-        samples: 0,
-        callback: MyCallback {
+        freq: Some(rate as i32),
+        channels: Some(2),
+        samples: None
+    };
+
+    let device = AudioDevice::open_playback(None, desired_spec, |spec| {
+        let mut xm = XMContext::new(&contents, spec.freq as u32).unwrap();
+        xm.set_max_loop_count(max_loops);
+
+        println!("Module name: {}", String::from_utf8_lossy(xm.get_module_name()));
+        println!("Tracker: {}", String::from_utf8_lossy(xm.get_tracker_name()));
+        println!("Channels: {}", xm.get_number_of_channels());
+        println!("Module length: {}", xm.get_module_length());
+        println!("Patterns: {}", xm.get_number_of_patterns());
+        println!("Instruments: {}", xm.get_number_of_instruments());
+
+        MyCallback {
             xm: xm,
             last_loop_count: 0,
             loop_tx: loop_tx
         }
-    };
-
-    let device = desired_spec.open_audio_device(None, false).unwrap();
+    }).unwrap();
 
     device.resume();
 
@@ -100,15 +111,5 @@ fn main() {
     let mut contents = Vec::new();
     File::open(&input).unwrap().read_to_end(&mut contents).unwrap();
 
-    let mut xm = XMContext::new(&contents, rate).unwrap();
-    xm.set_max_loop_count(max_loops);
-
-    println!("Module name: {}", String::from_utf8_lossy(xm.get_module_name()));
-    println!("Tracker: {}", String::from_utf8_lossy(xm.get_tracker_name()));
-    println!("Channels: {}", xm.get_number_of_channels());
-    println!("Module length: {}", xm.get_module_length());
-    println!("Patterns: {}", xm.get_number_of_patterns());
-    println!("Instruments: {}", xm.get_number_of_instruments());
-
-    play_audio(xm, rate, max_loops);
+    play_audio(&contents, rate, max_loops);
 }
