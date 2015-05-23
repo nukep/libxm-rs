@@ -22,7 +22,7 @@ impl AudioCallback for MyCallback {
     fn callback(&mut self, out: &mut [f32]) {
         self.xm.generate_samples(out);
 
-        let loop_count = self.xm.get_loop_count();
+        let loop_count = self.xm.loop_count();
 
         if loop_count != self.last_loop_count {
             self.last_loop_count = loop_count;
@@ -50,12 +50,12 @@ fn play_audio(contents: &[u8], rate: u32, max_loops: u8) {
         let mut xm = XMContext::new(&contents, spec.freq as u32).unwrap();
         xm.set_max_loop_count(max_loops);
 
-        println!("Module name: {}", String::from_utf8_lossy(xm.get_module_name()));
-        println!("Tracker: {}", String::from_utf8_lossy(xm.get_tracker_name()));
-        println!("Channels: {}", xm.get_number_of_channels());
-        println!("Module length: {}", xm.get_module_length());
-        println!("Patterns: {}", xm.get_number_of_patterns());
-        println!("Instruments: {}", xm.get_number_of_instruments());
+        println!("Module name: {}", String::from_utf8_lossy(xm.module_name()));
+        println!("Tracker: {}", String::from_utf8_lossy(xm.tracker_name()));
+        println!("Channels: {}", xm.number_of_channels());
+        println!("Module length: {}", xm.module_length());
+        println!("Patterns: {}", xm.number_of_patterns());
+        println!("Instruments: {}", xm.number_of_instruments());
 
         MyCallback {
             xm: xm,

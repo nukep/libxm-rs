@@ -19,7 +19,7 @@
 //! xm.set_max_loop_count(1);
 //!
 //! let mut buffer = [0.0; 4096];
-//! while xm.get_loop_count() == 0 {
+//! while xm.loop_count() == 0 {
 //!     xm.generate_samples(&mut buffer);
 //!     // The buffer is filled with stereo PCM data. Use it for whatever you need...
 //! }
@@ -136,13 +136,13 @@ impl XMContext {
     /// This value is 0 when the module is still playing, 1 when the module has
     /// looped once, etc.
     #[inline]
-    pub fn get_loop_count(&self) -> u8 {
+    pub fn loop_count(&self) -> u8 {
         unsafe { raw::xm_get_loop_count(self.raw) }
     }
 
     /// Gets the module name as a byte slice. The string encoding is unknown.
     #[inline]
-    pub fn get_module_name(&self) -> &[u8] {
+    pub fn module_name(&self) -> &[u8] {
         // Is name always UTF-8? Another encoding?
         unsafe {
             let name = raw::xm_get_module_name(self.raw);
@@ -152,7 +152,7 @@ impl XMContext {
 
     /// Gets the tracker name as a byte slice. The string encoding is unknown.
     #[inline]
-    pub fn get_tracker_name(&self) -> &[u8] {
+    pub fn tracker_name(&self) -> &[u8] {
         // Is name always UTF-8? Another encoding?
         unsafe {
             let name = raw::xm_get_tracker_name(self.raw);
@@ -162,19 +162,19 @@ impl XMContext {
 
     /// Gets the number of channels.
     #[inline]
-    pub fn get_number_of_channels(&self) -> u16 {
+    pub fn number_of_channels(&self) -> u16 {
         unsafe { raw::xm_get_number_of_channels(self.raw) }
     }
 
     /// Gets the module length (in patterns).
     #[inline]
-    pub fn get_module_length(&self) -> u16 {
+    pub fn module_length(&self) -> u16 {
         unsafe { raw::xm_get_module_length(self.raw) }
     }
 
     /// Gets the number of patterns.
     #[inline]
-    pub fn get_number_of_patterns(&self) -> u16 {
+    pub fn number_of_patterns(&self) -> u16 {
         unsafe { raw::xm_get_number_of_patterns(self.raw) }
     }
 
@@ -183,15 +183,15 @@ impl XMContext {
     /// # Note
     /// Pattern numbers go from `0` to `get_number_of_patterns() - 1`
     #[inline]
-    pub fn get_number_of_rows(&self, pattern: u16) -> u16 {
-        assert!(pattern < self.get_number_of_patterns());
+    pub fn number_of_rows(&self, pattern: u16) -> u16 {
+        assert!(pattern < self.number_of_patterns());
 
         unsafe { raw::xm_get_number_of_rows(self.raw, pattern) }
     }
 
     /// Gets the number of instruments.
     #[inline]
-    pub fn get_number_of_instruments(&self) -> u16 {
+    pub fn number_of_instruments(&self) -> u16 {
         unsafe { raw::xm_get_number_of_instruments(self.raw) }
     }
 
@@ -200,16 +200,16 @@ impl XMContext {
     /// # Note
     /// Instrument numbers go from `1` to `get_number_of_instruments()`
     #[inline]
-    pub fn get_number_of_samples(&self, instrument: u16) -> u16 {
+    pub fn number_of_samples(&self, instrument: u16) -> u16 {
         assert!(instrument >= 1);
-        assert!(instrument <= self.get_number_of_instruments());
+        assert!(instrument <= self.number_of_instruments());
 
         unsafe { raw::xm_get_number_of_samples(self.raw, instrument) }
     }
 
     /// Gets the current module speed.
     #[inline]
-    pub fn get_playing_speed(&self) -> PlayingSpeed {
+    pub fn playing_speed(&self) -> PlayingSpeed {
         let (mut bpm, mut tempo) = (0, 0);
         unsafe { raw::xm_get_playing_speed(self.raw, &mut bpm, &mut tempo) };
 
@@ -221,7 +221,7 @@ impl XMContext {
 
     /// Gets the current position in the module being played.
     #[inline]
-    pub fn get_position(&self) -> Position {
+    pub fn position(&self) -> Position {
         let (mut pattern_index, mut pattern, mut row) = (0, 0, 0);
         let mut samples = 0;
         unsafe { raw::xm_get_position(self.raw, &mut pattern_index, &mut pattern, &mut row, &mut samples) };
@@ -240,9 +240,9 @@ impl XMContext {
     /// # Note
     /// Instrument numbers go from `1` to `get_number_of_instruments()`
     #[inline]
-    pub fn get_latest_trigger_of_instrument(&self, instrument: u16) -> u64 {
+    pub fn latest_trigger_of_instrument(&self, instrument: u16) -> u64 {
         assert!(instrument >= 1);
-        assert!(instrument <= self.get_number_of_instruments());
+        assert!(instrument <= self.number_of_instruments());
 
         unsafe { raw::xm_get_latest_trigger_of_instrument(self.raw, instrument) }
     }
@@ -255,10 +255,10 @@ impl XMContext {
     ///
     /// Sample numbers go from `0` to `get_number_of_samples(instrument) - 1`
     #[inline]
-    pub fn get_latest_trigger_of_sample(&self, instrument: u16, sample: u16) -> u64 {
+    pub fn latest_trigger_of_sample(&self, instrument: u16, sample: u16) -> u64 {
         assert!(instrument >= 1);
-        assert!(instrument <= self.get_number_of_instruments());
-        assert!(sample < self.get_number_of_samples(instrument));
+        assert!(instrument <= self.number_of_instruments());
+        assert!(sample < self.number_of_samples(instrument));
 
         unsafe { raw::xm_get_latest_trigger_of_sample(self.raw, instrument, sample) }
     }
@@ -269,9 +269,9 @@ impl XMContext {
     /// # Note
     /// Channel numbers go from `1` to `get_number_of_channels()`
     #[inline]
-    pub fn get_latest_trigger_of_channel(&self, channel: u16) -> u64 {
+    pub fn latest_trigger_of_channel(&self, channel: u16) -> u64 {
         assert!(channel >= 1);
-        assert!(channel <= self.get_number_of_channels());
+        assert!(channel <= self.number_of_channels());
 
         unsafe { raw::xm_get_latest_trigger_of_channel(self.raw, channel) }
     }
