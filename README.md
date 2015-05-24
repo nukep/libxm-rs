@@ -1,5 +1,7 @@
 # libxm-rs
 
+[![Build Status](https://travis-ci.org/nukep/libxm-rs.svg)](https://travis-ci.org/nukep/libxm-rs)
+
 A binding of [libxm](https://github.com/Artefact2/libxm/) for Rust.
 
 A small XM (FastTracker II Extended Module) player library. Designed
