@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="rustdoc">
+    <meta name="description" content="API documentation for the Rust `XMContext` struct in crate `libxm`.">
+    <meta name="keywords" content="rust, rustlang, rust-lang, XMContext">
+
+    <title>libxm::XMContext - Rust</title>
+
+    <link rel="stylesheet" type="text/css" href="../main.css">
+
+    
+    
+</head>
+<body class="rustdoc">
+    <!--[if lte IE 8]>
+    <div class="warning">
+        This old browser is unsupported and will most likely display funky
+        things.
+    </div>
+    <![endif]-->
+
+    
+
+    <nav class="sidebar">
+        
+        <p class='location'><a href='index.html'>libxm</a></p><script>window.sidebarCurrent = {name: 'XMContext', ty: 'struct', relpath: ''};</script><script defer src="sidebar-items.js"></script>
+    </nav>
+
+    <nav class="sub">
+        <form class="search-form js-only">
+            <div class="search-container">
+                <input class="search-input" name="search"
+                       autocomplete="off"
+                       placeholder="Click or press ‘S’ to search, ‘?’ for more options…"
+                       type="search">
+            </div>
+        </form>
+    </nav>
+
+    <section id='main' class="content struct">
+<h1 class='fqn'><span class='in-band'>Struct <a href='index.html'>libxm</a>::<wbr><a class='struct' href=''>XMContext</a></span><span class='out-of-band'><span id='render-detail'>
+            <a id="toggle-all-docs" href="javascript:void(0)" title="collapse all docs">
+                [<span class='inner'>&#x2212;</span>]
+            </a>
+        </span><a id='src-106' class='srclink' href='../src/libxm/lib.rs.html#80-82' title='goto source code'>[src]</a></span></h1>
+<pre class='rust struct'>pub struct XMContext {
+    // some fields omitted
+}</pre><div class='docblock'><p>The XM context.</p>
+</div><h2 id='methods'>Methods</h2><h3 class='impl'><code>impl <a class='struct' href='../libxm/struct.XMContext.html' title='libxm::XMContext'>XMContext</a></code></h3><div class='impl-items'><h4 id='method.new' class='method'><code>fn <a href='#method.new' class='fnname'>new</a>(mod_data: <a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[</a><a href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>, rate: <a href='https://doc.rust-lang.org/nightly/std/primitive.u32.html'>u32</a>) -&gt; <a class='enum' href='https://doc.rust-lang.org/nightly/core/result/enum.Result.html' title='core::result::Result'>Result</a>&lt;<a class='struct' href='../libxm/struct.XMContext.html' title='libxm::XMContext'>XMContext</a>, <a class='enum' href='../libxm/enum.XMError.html' title='libxm::XMError'>XMError</a>&gt;</code></h4>
+<div class='docblock'><p>Creates an XM context.</p>
+
+<h1 id='parameters' class='section-header'><a href='#parameters'>Parameters</a></h1>
+<ul>
+<li><code>mod_data</code> - The contents of the module.</li>
+<li><code>rate</code> - The play rate in Hz. Recommended value is 48000.</li>
+</ul>
+</div><h4 id='method.generate_samples' class='method'><code>fn <a href='#method.generate_samples' class='fnname'>generate_samples</a>(&amp;mut self, output: <a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;mut [</a><a href='https://doc.rust-lang.org/nightly/std/primitive.f32.html'>f32</a><a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a>)</code></h4>
+<div class='docblock'><p>Plays the module and puts the sound samples in the specified output buffer.
+The output is in stereo.</p>
+</div><h4 id='method.set_max_loop_count' class='method'><code>fn <a href='#method.set_max_loop_count' class='fnname'>set_max_loop_count</a>(&amp;mut self, loopcnt: <a href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a>)</code></h4>
+<div class='docblock'><p>Sets the maximum number of times a module can loop.</p>
+
+<p>After the specified number of loops, calls to <code>generate_samples()</code> will
+generate silence.</p>
+</div><h4 id='method.loop_count' class='method'><code>fn <a href='#method.loop_count' class='fnname'>loop_count</a>(&amp;self) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a></code></h4>
+<div class='docblock'><p>Gets the loop count of the currently playing module.</p>
+
+<p>This value is 0 when the module is still playing, 1 when the module has
+looped once, etc.</p>
+</div><h4 id='method.module_name' class='method'><code>fn <a href='#method.module_name' class='fnname'>module_name</a>(&amp;self) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[</a><a href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a></code></h4>
+<div class='docblock'><p>Gets the module name as a byte slice. The string encoding is unknown.</p>
+</div><h4 id='method.tracker_name' class='method'><code>fn <a href='#method.tracker_name' class='fnname'>tracker_name</a>(&amp;self) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>&amp;[</a><a href='https://doc.rust-lang.org/nightly/std/primitive.u8.html'>u8</a><a href='https://doc.rust-lang.org/nightly/std/primitive.slice.html'>]</a></code></h4>
+<div class='docblock'><p>Gets the tracker name as a byte slice. The string encoding is unknown.</p>
+</div><h4 id='method.number_of_channels' class='method'><code>fn <a href='#method.number_of_channels' class='fnname'>number_of_channels</a>(&amp;self) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a></code></h4>
+<div class='docblock'><p>Gets the number of channels.</p>
+</div><h4 id='method.module_length' class='method'><code>fn <a href='#method.module_length' class='fnname'>module_length</a>(&amp;self) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a></code></h4>
+<div class='docblock'><p>Gets the module length (in patterns).</p>
+</div><h4 id='method.number_of_patterns' class='method'><code>fn <a href='#method.number_of_patterns' class='fnname'>number_of_patterns</a>(&amp;self) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a></code></h4>
+<div class='docblock'><p>Gets the number of patterns.</p>
+</div><h4 id='method.number_of_rows' class='method'><code>fn <a href='#method.number_of_rows' class='fnname'>number_of_rows</a>(&amp;self, pattern: <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a></code></h4>
+<div class='docblock'><p>Gets the number of rows in a pattern.</p>
+
+<h1 id='note' class='section-header'><a href='#note'>Note</a></h1>
+<p>Pattern numbers go from <code>0</code> to <code>get_number_of_patterns() - 1</code></p>
+</div><h4 id='method.number_of_instruments' class='method'><code>fn <a href='#method.number_of_instruments' class='fnname'>number_of_instruments</a>(&amp;self) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a></code></h4>
+<div class='docblock'><p>Gets the number of instruments.</p>
+</div><h4 id='method.number_of_samples' class='method'><code>fn <a href='#method.number_of_samples' class='fnname'>number_of_samples</a>(&amp;self, instrument: <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a></code></h4>
+<div class='docblock'><p>Gets the number of samples of an instrument.</p>
+
+<h1 id='note' class='section-header'><a href='#note'>Note</a></h1>
+<p>Instrument numbers go from <code>1</code> to <code>get_number_of_instruments()</code></p>
+</div><h4 id='method.playing_speed' class='method'><code>fn <a href='#method.playing_speed' class='fnname'>playing_speed</a>(&amp;self) -&gt; <a class='struct' href='../libxm/struct.PlayingSpeed.html' title='libxm::PlayingSpeed'>PlayingSpeed</a></code></h4>
+<div class='docblock'><p>Gets the current module speed.</p>
+</div><h4 id='method.position' class='method'><code>fn <a href='#method.position' class='fnname'>position</a>(&amp;self) -&gt; <a class='struct' href='../libxm/struct.Position.html' title='libxm::Position'>Position</a></code></h4>
+<div class='docblock'><p>Gets the current position in the module being played.</p>
+</div><h4 id='method.latest_trigger_of_instrument' class='method'><code>fn <a href='#method.latest_trigger_of_instrument' class='fnname'>latest_trigger_of_instrument</a>(&amp;self, instrument: <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a></code></h4>
+<div class='docblock'><p>Gets the latest time (in number of generated samples) when a
+particular instrument was triggered in any channel.</p>
+
+<h1 id='note' class='section-header'><a href='#note'>Note</a></h1>
+<p>Instrument numbers go from <code>1</code> to <code>get_number_of_instruments()</code></p>
+</div><h4 id='method.latest_trigger_of_sample' class='method'><code>fn <a href='#method.latest_trigger_of_sample' class='fnname'>latest_trigger_of_sample</a>(&amp;self, instrument: <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>, sample: <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a></code></h4>
+<div class='docblock'><p>Get the latest time (in number of generated samples) when a
+particular sample was triggered in any channel.</p>
+
+<h1 id='note' class='section-header'><a href='#note'>Note</a></h1>
+<p>Instrument numbers go from <code>1</code> to <code>get_number_of_instruments()</code></p>
+
+<p>Sample numbers go from <code>0</code> to <code>get_number_of_samples(instrument) - 1</code></p>
+</div><h4 id='method.latest_trigger_of_channel' class='method'><code>fn <a href='#method.latest_trigger_of_channel' class='fnname'>latest_trigger_of_channel</a>(&amp;self, channel: <a href='https://doc.rust-lang.org/nightly/std/primitive.u16.html'>u16</a>) -&gt; <a href='https://doc.rust-lang.org/nightly/std/primitive.u64.html'>u64</a></code></h4>
+<div class='docblock'><p>Get the latest time (in number of generated samples) when any
+instrument was triggered in a given channel.</p>
+
+<h1 id='note' class='section-header'><a href='#note'>Note</a></h1>
+<p>Channel numbers go from <code>1</code> to <code>get_number_of_channels()</code></p>
+</div></div><h2 id='implementations'>Trait Implementations</h2><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Send.html' title='core::marker::Send'>Send</a> for <a class='struct' href='../libxm/struct.XMContext.html' title='libxm::XMContext'>XMContext</a></code></h3><div class='impl-items'></div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/marker/trait.Sync.html' title='core::marker::Sync'>Sync</a> for <a class='struct' href='../libxm/struct.XMContext.html' title='libxm::XMContext'>XMContext</a></code></h3><div class='impl-items'></div><h3 class='impl'><code>impl <a class='trait' href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html' title='core::ops::Drop'>Drop</a> for <a class='struct' href='../libxm/struct.XMContext.html' title='libxm::XMContext'>XMContext</a></code></h3><div class='impl-items'><h4 id='method.drop' class='method'><code>fn <a href='https://doc.rust-lang.org/nightly/core/ops/trait.Drop.html#method.drop' class='fnname'>drop</a>(&amp;mut self)</code></h4>
+</div></section>
+    <section id='search' class="content hidden"></section>
+
+    <section class="footer"></section>
+
+    <aside id="help" class="hidden">
+        <div>
+            <h1 class="hidden">Help</h1>
+
+            <div class="shortcuts">
+                <h2>Keyboard Shortcuts</h2>
+
+                <dl>
+                    <dt>?</dt>
+                    <dd>Show this help dialog</dd>
+                    <dt>S</dt>
+                    <dd>Focus the search field</dd>
+                    <dt>&larrb;</dt>
+                    <dd>Move up in search results</dd>
+                    <dt>&rarrb;</dt>
+                    <dd>Move down in search results</dd>
+                    <dt>&#9166;</dt>
+                    <dd>Go to active search result</dd>
+                </dl>
+            </div>
+
+            <div class="infos">
+                <h2>Search Tricks</h2>
+
+                <p>
+                    Prefix searches with a type followed by a colon (e.g.
+                    <code>fn:</code>) to restrict the search to a given type.
+                </p>
+
+                <p>
+                    Accepted types are: <code>fn</code>, <code>mod</code>,
+                    <code>struct</code>, <code>enum</code>,
+                    <code>trait</code>, <code>type</code>, <code>macro</code>,
+                    and <code>const</code>.
+                </p>
+
+                <p>
+                    Search functions by type signature (e.g.
+                    <code>vec -> usize</code>)
+                </p>
+            </div>
+        </div>
+    </aside>
+
+    
+
+    <script>
+        window.rootPath = "../";
+        window.currentCrate = "libxm";
+        window.playgroundUrl = "";
+    </script>
+    <script src="../jquery.js"></script>
+    <script src="../main.js"></script>
+    
+    <script async src="../search-index.js"></script>
+</body>
+</html>

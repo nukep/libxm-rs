@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["XMError","Possible errors from the `XMContext::new` method."]],"mod":[["ffi",""]],"struct":[["PlayingSpeed","The return values from `XMContext::get_playing_speed()`."],["Position","The return values from `XMContext::get_position()`."],["XMContext","The XM context."]]});
