@@ -36,7 +36,8 @@ impl AudioCallback for MyCallback {
 fn play_audio(contents: &[u8], rate: u32, max_loops: u8) {
     use std::sync::mpsc::channel;
 
-    let _sdl = sdl2::init().audio().unwrap();
+    let sdl = sdl2::init().unwrap();
+    let audio = sdl.audio().unwrap();
 
     let (loop_tx, loop_rx) = channel();
 
@@ -46,7 +47,7 @@ fn play_audio(contents: &[u8], rate: u32, max_loops: u8) {
         samples: None
     };
 
-    let device = AudioDevice::open_playback(None, desired_spec, |spec| {
+    let device = AudioDevice::open_playback(&audio, None, &desired_spec, |spec| {
         let mut xm = XMContext::new(&contents, spec.freq as u32).unwrap();
         xm.set_max_loop_count(max_loops);
 
@@ -88,7 +89,7 @@ fn main() {
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => { m }
-        Err(f) => { panic!(f.to_string()) }
+        Err(f) => { panic!("{:?}", f) }
     };
 
     let input = if !matches.free.is_empty() {

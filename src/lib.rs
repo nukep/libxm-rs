@@ -38,7 +38,7 @@
 extern crate libc;
 
 pub mod ffi;
-use ffi as raw;
+use crate::ffi as raw;
 use std::mem;
 
 /// Possible errors from the `XMContext::new` method.
@@ -92,7 +92,7 @@ impl XMContext {
     /// * `rate` - The play rate in Hz. Recommended value is 48000.
     pub fn new(mod_data: &[u8], rate: u32) -> Result<XMContext, XMError> {
         unsafe {
-            let mut raw = mem::uninitialized();
+            let mut raw = std::ptr::null_mut();
 
             let mod_data_ptr = mem::transmute(mod_data.as_ptr());
             let mod_data_len = mod_data.len() as libc::size_t;
