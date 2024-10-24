@@ -1,10 +1,14 @@
 use getopts::Options;
 use libxm::XMContext;
-use sdl2::audio::{AudioCallback, AudioDevice, AudioSpecDesired};
 use std::fs::File;
 use std::io::Read;
 use std::env;
 use std::sync::mpsc::Sender;
+
+use cpal::{
+    traits::{DeviceTrait, HostTrait, StreamTrait},
+    StreamConfig,
+};
 
 struct MyCallback {
     xm: XMContext,
@@ -12,9 +16,7 @@ struct MyCallback {
     loop_tx: Sender<()>
 }
 
-impl AudioCallback for MyCallback {
-    type Channel = f32;
-
+impl MyCallback {
     fn callback(&mut self, out: &mut [f32]) {
         self.xm.generate_samples(out);
 
@@ -32,36 +34,41 @@ impl AudioCallback for MyCallback {
 fn play_audio(contents: &[u8], rate: u32, max_loops: u8) {
     use std::sync::mpsc::channel;
 
-    let sdl = sdl2::init().unwrap();
-    let audio = sdl.audio().unwrap();
-
     let (loop_tx, loop_rx) = channel();
 
-    let desired_spec = AudioSpecDesired {
-        freq: Some(rate as i32),
-        channels: Some(2),
-        samples: None
+    let mut xm = XMContext::new(&contents, rate).unwrap();
+    xm.set_max_loop_count(max_loops);
+
+    println!("Module name: {}", String::from_utf8_lossy(xm.module_name()));
+    println!("Tracker: {}", String::from_utf8_lossy(xm.tracker_name()));
+    println!("Channels: {}", xm.number_of_channels());
+    println!("Module length: {}", xm.module_length());
+    println!("Patterns: {}", xm.number_of_patterns());
+    println!("Instruments: {}", xm.number_of_instruments());
+
+    let host = cpal::default_host();
+    let device = host.default_output_device().unwrap();
+    let config = StreamConfig {
+        channels: 2,
+        sample_rate: cpal::SampleRate(rate),
+        buffer_size: cpal::BufferSize::Default
     };
 
-    let device = AudioDevice::open_playback(&audio, None, &desired_spec, |spec| {
-        let mut xm = XMContext::new(&contents, spec.freq as u32).unwrap();
-        xm.set_max_loop_count(max_loops);
+    let mut my_callback = MyCallback {
+        xm,
+        last_loop_count: 0,
+        loop_tx
+    };
 
-        println!("Module name: {}", String::from_utf8_lossy(xm.module_name()));
-        println!("Tracker: {}", String::from_utf8_lossy(xm.tracker_name()));
-        println!("Channels: {}", xm.number_of_channels());
-        println!("Module length: {}", xm.module_length());
-        println!("Patterns: {}", xm.number_of_patterns());
-        println!("Instruments: {}", xm.number_of_instruments());
+    let cb = move |output: &mut [f32], _: &cpal::OutputCallbackInfo| {
+        my_callback.callback(output);
+    };
+    let ecb = move |err| {
+        println!("ERROR: {:?}", err);
+    };
 
-        MyCallback {
-            xm: xm,
-            last_loop_count: 0,
-            loop_tx: loop_tx
-        }
-    }).unwrap();
-
-    device.resume();
+    let stream = device.build_output_stream(&config, cb, ecb, None).unwrap();
+    stream.play().unwrap();
 
     for _ in 0..max_loops {
         // Block until the song has looped
