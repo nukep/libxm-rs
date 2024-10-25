@@ -13,11 +13,8 @@ links = "xm"
 build = "build.rs"
 edition = "2021"
 
-[dependencies]
-libc = "*"
-
 [build-dependencies]
-gcc = "0.3"
+cc = "1.1"
 
 [dev-dependencies]
 cpal = "0.15.3"

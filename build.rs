@@ -1,4 +1,4 @@
-extern crate gcc;
+use cc;
 
 fn main() {
     fn parse_env(key: &str, default: bool) -> bool {
@@ -26,7 +26,7 @@ fn main() {
         Some(if value { "1" } else { "0" })
     }
 
-    gcc::Config::new()
+    cc::Build::new()
         .file("libxm/src/context.c")
         .file("libxm/src/load.c")
         .file("libxm/src/play.c")
