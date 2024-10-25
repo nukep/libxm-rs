@@ -89,7 +89,7 @@ impl XMContext {
     /// * `rate` - The play rate in Hz. Recommended value is 48000.
     pub fn new(mod_data: &[u8], rate: u32) -> Result<XMContext, XMError> {
         unsafe {
-            let mut raw = std::ptr::null_mut();
+            let mut raw: *mut ffi::xm_context = std::ptr::null_mut();
 
             let mod_data_ptr = mem::transmute(mod_data.as_ptr());
             let mod_data_len = mod_data.len() as ffi::size_t;
@@ -138,22 +138,34 @@ impl XMContext {
     }
 
     /// Gets the module name as a byte slice. The string encoding is unknown.
+    /// 
+    /// Returns None if the XM_STRINGS build setting is false.
     #[inline]
-    pub fn module_name(&self) -> &[u8] {
+    pub fn module_name(&self) -> Option<&[u8]> {
         // Is name always UTF-8? Another encoding?
         unsafe {
             let name = ffi::xm_get_module_name(self.raw);
-            std::ffi::CStr::from_ptr(name).to_bytes()
+            if name.is_null() {
+                None
+            } else {
+                Some(std::ffi::CStr::from_ptr(name).to_bytes())
+            }
         }
     }
 
     /// Gets the tracker name as a byte slice. The string encoding is unknown.
+    /// 
+    /// Returns None if the XM_STRINGS build setting is false.
     #[inline]
-    pub fn tracker_name(&self) -> &[u8] {
+    pub fn tracker_name(&self) -> Option<&[u8]> {
         // Is name always UTF-8? Another encoding?
         unsafe {
             let name = ffi::xm_get_tracker_name(self.raw);
-            std::ffi::CStr::from_ptr(name).to_bytes()
+            if name.is_null() {
+                None
+            } else {
+                Some(std::ffi::CStr::from_ptr(name).to_bytes())
+            }
         }
     }
 

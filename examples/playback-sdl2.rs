@@ -47,8 +47,12 @@ fn play_audio(contents: &[u8], rate: u32, max_loops: u8) {
         let mut xm = XMContext::new(&contents, spec.freq as u32).unwrap();
         xm.set_max_loop_count(max_loops);
 
-        println!("Module name: {}", String::from_utf8_lossy(xm.module_name()));
-        println!("Tracker: {}", String::from_utf8_lossy(xm.tracker_name()));
+        if let Some(module_name) = xm.module_name() {
+            println!("Module name: {}", String::from_utf8_lossy(module_name));
+        }
+        if let Some(tracker_name) = xm.tracker_name() {
+            println!("Tracker: {}", String::from_utf8_lossy(tracker_name));
+        }
         println!("Channels: {}", xm.number_of_channels());
         println!("Module length: {}", xm.module_length());
         println!("Patterns: {}", xm.number_of_patterns());

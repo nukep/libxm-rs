@@ -17,6 +17,9 @@ fn main() {
         }
     }
 
+    let defensive = parse_env("XM_DEFENSIVE", true);
+    let strings = parse_env("XM_STRINGS", true);
+    let libxmize_delta_samples = parse_env("XM_LIBXMIZE_DELTA_SAMPLES", true);
     let linear_interpolation = parse_env("XM_LINEAR_INTERPOLATION", true);
     let ramping = parse_env("XM_RAMPING", true);
     let debug = parse_env("XM_DEBUG", false);
@@ -32,6 +35,9 @@ fn main() {
         .file("libxm/src/play.c")
         .file("libxm/src/xm.c")
         .include("libxm/include")
+        .define("XM_DEFENSIVE", on_off(defensive))
+        .define("XM_STRINGS", on_off(strings))
+        .define("XM_LIBXMIZE_DELTA_SAMPLES", on_off(libxmize_delta_samples))
         .define("XM_LINEAR_INTERPOLATION", on_off(linear_interpolation))
         .define("XM_RAMPING", on_off(ramping))
         .define("XM_DEBUG", on_off(debug))

@@ -7,6 +7,17 @@ pub enum xm_context {}
 pub type xm_context_t = xm_context;
 
 extern "C" {
+    // TODO:
+    // xm_seek
+    // xm_mute_channel
+    // xm_mute_instrument
+    // xm_get_sample_waveform
+    // xm_is_channel_active
+    // xm_get_instrument_of_channel
+    // xm_get_frequency_of_channel
+    // xm_get_volume_of_channel
+    // xm_get_panning_of_channel
+
     pub fn xm_create_context_safe(context: *mut *mut xm_context_t, moddata: *const c_char, moddata_length: size_t, rate: u32) -> c_int;
     pub fn xm_free_context(context: *mut xm_context_t);
     pub fn xm_generate_samples(context: *mut xm_context_t, output: *mut c_float, numsamples: size_t);
