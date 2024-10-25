@@ -1,7 +1,7 @@
 [package]
 
 name = "libxm"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["Danny Spencer <dan.spencer.np@gmail.com>"]
 description = "A binding of libxm for Rust. A small XM (FastTracker II Extended Module) player library. Designed for easy integration in demos and such, and provides timing functions for easy sync against specific instruments, samples or channels."
 repository = "https://github.com/nukep/libxm-rs"
