@@ -1,6 +1,7 @@
 # libxm-rs
 
 [![Crates.io version](https://img.shields.io/crates/v/libxm.svg)](https://crates.io/crates/libxm)
+[![Docs](https://docs.rs/libxm/badge.svg)](https://docs.rs/libxm/)
 
 A binding of [libxm](https://github.com/Artefact2/libxm/) for Rust.
 
@@ -9,6 +10,10 @@ for easy integration in demos and such, and provides timing functions
 for easy sync against specific instruments, samples or channels.
 
 As with libxm, this library is released under the WTFPL license.
+
+## [Documentation](https://docs.rs/libxm/)
+
+Documentation is hosted here: https://docs.rs/libxm/
 
 ## Build requirements
 
